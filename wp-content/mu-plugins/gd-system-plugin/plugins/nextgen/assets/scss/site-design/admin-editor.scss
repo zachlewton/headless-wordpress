@@ -1,0 +1,203 @@
+@import "node_modules/@wordpress/base-styles/colors";
+@import "node_modules/@wordpress/base-styles/variables";
+
+
+// Following styles are core nextGen styling that are duplicated here for when this is run as a separate module.
+// Hides the "Star" icon from the PanelBody header.
+.interface-complementary-area__pin-unpin-item {
+	display: none !important;
+}
+
+// Moves the PanelBody header close icon to its proper spot.
+.interface-complementary-area-header .components-button.has-icon {
+	padding: 6px 13px;
+}
+
+// Following styles specific to the Site Design sidebar:
+.components-site-design-styles {
+	padding: 16px;
+
+	.components-radio-control .components-base-control__label {
+		margin-bottom: 15px;
+	}
+
+	.components-radio-control__option:not(:last-child) {
+		margin-bottom: 7px;
+	}
+}
+
+.components-site-design-color-palettes {
+
+	.color-palette__body {
+		border-radius: 2px;
+		margin-bottom: 5px;
+
+		&.is-opened {
+			border: 1px solid $gray-900;
+
+			.color-palette__preview {
+				padding: 4px;
+
+				&-button.components-button {
+					height: 36px;
+				}
+			}
+		}
+	}
+
+	.color-palette__preview {
+
+		&-button.components-button {
+			display: block;
+			height: 38px;
+			padding: 0;
+			position: relative;
+			width: 100%;
+
+			&::before {
+				border-radius: 2px;
+				border: 1px solid rgba(0, 0, 0, 0.2);
+				bottom: 0;
+				content: "";
+				left: 0;
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+		}
+
+		.component-color-indicator {
+			border: none;
+			height: 100%;
+			margin: 0;
+			width: 25%;
+
+			+ .component-color-indicator {
+				margin: 0;
+			}
+		}
+	}
+
+	.color-palette__colors {
+		padding: 4px 16px;
+
+		.components-dropdown {
+			margin: 10px 0 2px;
+			width: 100%;
+
+			&:last-child {
+				margin-bottom: 12px;
+			}
+		}
+
+		.components-button {
+			color: $gray-900 !important;
+			font-size: 13px;
+			font-weight: 400;
+			text-decoration: none;
+		}
+
+		.component-color-indicator {
+			border-radius: 100%;
+			border: none;
+			height: 22px;
+			margin: 3px 14px 3px 3px;
+			position: relative;
+			width: 22px;
+
+			&::before {
+				border-radius: 100%;
+				border: 2px solid $gray-900;
+				bottom: -3px;
+				content: "";
+				left: -3px;
+				position: absolute;
+				right: -3px;
+				top: -3px;
+			}
+		}
+	}
+}
+
+.components-nextgen-site-design.save-changes {
+	padding: 0;
+	position: absolute;
+	top: -42px;
+	right: 19px;
+
+	.components-button.is-primary {
+		border-radius: 2px;
+
+		&:disabled {
+			border-color: var(--wp-admin-theme-color);
+			background: var(--wp-admin-theme-color);
+			color: hsla(0, 0%, 100%, 0.4);
+		}
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+}
+
+.components-site-design-fonts {
+
+	&__options {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	&__option {
+		border-radius: 5px;
+		border: 1px solid $gray-100;
+		margin-bottom: 1em;
+
+		&__section {
+			padding: 1em 1.5em 1.5em;
+		}
+
+		&__primary {
+			font-size: 1.5rem;
+			margin-bottom: 0.15em;
+		}
+
+		&__secondary {
+			font-size: 0.8rem;
+			margin-bottom: 0;
+			max-width: 88%;
+		}
+
+		&__settings {
+			border-top: 1px solid $gray-900;
+		}
+
+		&:hover {
+			border-color: var(--wp-admin-theme-color);
+			cursor: pointer;
+		}
+
+		&.is-selected {
+			border-color: $gray-900;
+		}
+
+		.components-font-size-picker .components-font-size-picker__controls {
+			flex-wrap: nowrap;
+			align-items: flex-end;
+		}
+
+		// Tweaks for specific fonts.
+		.is-heebo &__primary {
+			font-weight: 600;
+		}
+
+		.is-heebo &__secondary {
+			font-size: 0.75rem;
+		}
+
+		.is-work &__primary,
+		.is-trocchi &__primary {
+			font-size: 1.4rem;
+		}
+	}
+}

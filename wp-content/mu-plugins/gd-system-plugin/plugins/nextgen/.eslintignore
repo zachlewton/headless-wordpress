@@ -1,0 +1,8 @@
+build
+dist
+node_modules
+vendor
+wordpress*
+
+# lint top level dot files
+!.*

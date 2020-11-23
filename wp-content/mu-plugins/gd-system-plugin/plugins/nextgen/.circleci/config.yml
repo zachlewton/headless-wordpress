@@ -1,0 +1,104 @@
+version: 2.1
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+              tags:
+                only: /^(?!canary).*$/
+      - i18n:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build
+
+jobs:
+  build:
+    docker:
+      - image: cimg/php:7.3.22-node
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-deps-{{ .Branch }}
+            - yarn-deps
+      - run:
+          name: Install Node dependencies
+          command: |
+            PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+            yarn install --frozen-lockfile
+      - restore_cache:
+          keys:
+            - composer-deps-{{ .Branch }}-{{ checksum "composer.lock" }}
+            - composer-deps-{{ .Branch }}
+            - composer-deps
+      - run:
+          name: Install Composer dependencies
+          command: |
+            composer validate --strict
+            composer install
+      - save_cache:
+          key: composer-deps-{{ .Branch }}-{{ checksum "composer.lock" }}
+          paths:
+            - ~/project/vendor
+      - run:
+          name: Build the plugin
+          command: |
+            npm run build
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - build
+            - dist
+  i18n:
+    docker:
+      - image: cimg/php:7.3.22-node
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            "fc:81:09:cf:0f:63:62:ac:77:1d:77:a0:56:35:2a:53"
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - restore_cache:
+          keys:
+            - yarn-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-deps-{{ .Branch }}
+            - yarn-deps
+      - restore_cache:
+          keys:
+            - composer-deps-{{ .Branch }}-{{ checksum "composer.lock" }}
+            - composer-deps-{{ .Branch }}
+            - composer-deps
+      - run:
+          name: Install Gettext
+          command: |
+            sudo apt-get update
+            sudo apt-get install gettext
+      - run:
+          name: Generate translation files
+          command: |
+            yarn build:i18n
+      - run:
+          name: Commit the files back to Github
+          command: |
+            git config --global user.email "plugins@godaddy.com"
+            git config --global user.name "GoDaddy Translator Bot"
+            git checkout HEAD -- composer.lock
+            git checkout HEAD -- yarn.lock
+            git add languages/\*
+            git status
+            git commit -m "[skip ci] Update languages files"
+            git push origin master --quiet
+      - add_ssh_keys:
+          fingerprints:
+            "aa:db:9d:1c:33:9e:c1:80:fb:63:3c:0e:f4:da:a0:fc"
+      - run:
+          name: Mirror repo back to GHE
+          command: |
+            ssh-keyscan -H $GHE_DOMAIN >> ~/.ssh/known_hosts
+            git push --mirror $GIT_NEXTGEN_URL

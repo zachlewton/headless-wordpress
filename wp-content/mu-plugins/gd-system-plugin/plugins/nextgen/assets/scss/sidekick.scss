@@ -1,0 +1,45 @@
+.block-editor-page {
+
+	.wpaas-help-support {
+		align-items: center;
+		background-color: #fff;
+		bottom: 0;
+		display: flex;
+		height: calc(100vh - 92px);
+		max-width: 400px;
+		position: fixed;
+		right: -100%;
+		transition: right 0.5s cubic-bezier(0.77, 0, 0.175, 1), box-shadow 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+		width: 100%;
+		z-index: 999;
+		padding: 20px;
+		padding-top: 82px;
+	}
+
+	.wpaas-help-support.visible {
+		box-shadow: rgba(0, 0, 0, 0.1) 0 6px 24px 0, rgba(0, 0, 0, 0.01) 0 0 0 1px;
+		right: 0;
+	}
+
+	.wpaas-help-support .close {
+		background-color: $gray-900;
+		border-radius: 2px;
+		color: $white;
+		cursor: pointer;
+		font-size: 28px;
+		font-weight: 400;
+		height: 34px;
+		left: 20px;
+		line-height: 32px;
+		opacity: 1;
+		position: absolute;
+		top: 26px;
+		width: calc(100% - 40px);
+
+		&:hover {
+			background: var(--wp-admin-theme-color-darker-10);
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+}

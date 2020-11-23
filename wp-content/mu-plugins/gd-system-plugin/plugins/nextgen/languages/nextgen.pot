@@ -1,0 +1,97 @@
+# Copyright (c) 2020 GoDaddy Operating Company, LLC. All Rights Reserved.
+msgid ""
+msgstr ""
+"Project-Id-Version: NextGen 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nextgen\n"
+"Last-Translator: plugins@godaddy.com\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2020-09-04T17:05:11+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: gd-nextgen\n"
+
+#. Plugin Name of the plugin
+msgid "NextGen"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+msgid "https://www.godaddy.com"
+msgstr ""
+
+#. Description of the plugin
+msgid "Next Generation WordPress Experience"
+msgstr ""
+
+#. Author of the plugin
+msgid "GoDaddy"
+msgstr ""
+
+#: includes/class-block-editor.php:41
+msgid "Setting to disable or enable NextGen administration dashboard shortcut."
+msgstr ""
+
+#: includes/class-block-editor.php:75
+msgid "WordPress Dashboard"
+msgstr ""
+
+#: assets/js/nextgen-settings/nextgen-settings-controls.js:25
+msgid "WordPress Admin shortcut"
+msgstr ""
+
+#: assets/js/nextgen-settings/nextgen-settings-controls.js:26
+msgid "Allow the admin header shortcut."
+msgstr ""
+
+#: assets/js/site-content/post-menu-actions.js:26
+msgid "Select an action"
+msgstr ""
+
+#: assets/js/site-content/post-menu-actions.js:35
+msgid "Duplicate"
+msgstr ""
+
+#: assets/js/site-content/post-menu-actions.js:47
+msgid "Really delete?"
+msgstr ""
+
+#: assets/js/site-content/post-menu-actions.js:52
+msgid "Delete"
+msgstr ""
+
+#. translators: %s is the post title.
+#: assets/js/site-content/post-type-panel.js:49
+msgid "\"%s\" has been deleted."
+msgstr ""
+
+#: assets/js/site-content/post-type-panel.js:56
+msgid "Undo"
+msgstr ""
+
+#: assets/js/site-content/post-type-panel.js:63
+msgid "Trashing failed"
+msgstr ""
+
+#. translators: %s is the post title.
+#: assets/js/site-content/post-type-panel.js:105
+msgid "\"%s\" has been duplicated."
+msgstr ""
+
+#: assets/js/site-content/post-type-panel.js:111
+msgid "Duplication failed"
+msgstr ""
+
+#: assets/js/site-content/post-type-panel.js:132
+msgid "(no title)"
+msgstr ""
+
+#: assets/js/site-content/post-type-panel.js:136
+msgid "(current)"
+msgstr ""
+
+#: assets/js/site-design/style-selector.js:23
+msgid "Choose a curated design style, then personalize your site's colors."
+msgstr ""
