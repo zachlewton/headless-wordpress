@@ -715,7 +715,7 @@ add_action('rest_api_init', function(){
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-function sub_projects(WP_REST_Request $request){
+function get_subs(WP_REST_Request $request){
 
     $slug= $request['slug'];
     $type=$request['type'];
@@ -724,60 +724,50 @@ function sub_projects(WP_REST_Request $request){
         'post_type' => "sub_{$type}",
         
     );
-
     $posts = new WP_Query($args);
     $data=[];
-    $i=0;
-
+    
     foreach($posts->posts as $post){
         
-        $galleries=[];
-        $x=0;
         $parent_id= get_post_meta($post->ID, "parent_{$type}", true)[0];
         $parent= get_post($parent_id)->post_name;
-        
         if($parent === $slug){
-           
-            $data[$i]['ID']=$post->ID;
-            $data[$i]['slug']=$post->post_name;
-            $data[$i]['title']=$post->post_title;
-            $data[$i]['description']= get_post_meta($post->ID, "sub_{$type}_description", true);
+
+            $post_object = new stdClass();
+            $galleries = [];
+            $post_object->id = $post->ID;
+            $post_object->slug = $post->post_name;
+            $post_object->title = $post->post_title;
+            $post_object->description = get_post_meta($post->ID, "sub_{$type}_description", true);
            
             if(have_rows("sub_{$type}_galleries", $post->ID)):
+                
                 while(have_rows("sub_{$type}_galleries", $post->ID)) : the_row();
-                    
-                    $galleries[$x]['title'] = get_sub_field('gallery_title');
+                    $galleries_object = new stdClass();
+                    $galleries_object->title = get_sub_field('gallery_title');
                     $image_array= get_sub_field('gallery_images');
-                    $galleries[$x]['images']= [];
+                    $galleries_object->images= [];
                     foreach($image_array as $id){
-                        array_push($galleries[$x]['images'],handle_images($id) );
+                        array_push($galleries_object->images,handle_images($id) );
                     }
-                    $galleries[$x]['thumbnail']=get_image_src(get_sub_field('gallery_thumbnail'));
-                    $x++;
+                    $galleries_object->thumbnail=get_image_src(get_sub_field('gallery_thumbnail'));
+                    array_push($galleries, $galleries_object);
 
                 endwhile;
-                else: null;
             endif;
-            $data[$i]['galleries']=$galleries;
+            $post_object->galleries=$galleries;
+            array_push($data, $post_object);
         }
-        
-        $i++;
-
     }
-    
     return $data;
-
-
 }
-
-
 
 add_action('rest_api_init', function(){
 
     register_rest_route('custom-api/v1', 'sub_(?P<type>.*)(?P<slug>.*)', [
 
         'methods'  => 'GET',
-        'callback' => 'sub_projects'
+        'callback' => 'get_subs'
     ]);
 });
 
