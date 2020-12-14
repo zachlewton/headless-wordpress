@@ -462,7 +462,51 @@
 
 
 
-// ///////////////////////////////////////////////////////////////////
+
+
+
+function get_sub_for_nav($type, $slug){
+   
+    $args = array(
+        'numberposts' => -1,
+        'post_type' => "sub_{$type}",
+        
+    );
+    $posts = new WP_Query($args);
+    $data=[];
+    
+    foreach($posts->posts as $post){
+        
+        $parent_id= get_post_meta($post->ID, "parent_{$type}", true)[0];
+        $parent= get_post($parent_id)->post_name;
+        if($parent === $slug){
+
+            $post_object = new stdClass();
+            $galleries = [];
+            $post_object->id = $post->ID;
+            $post_object->slug = $post->post_name;
+            $post_object->title = $post->post_title;
+           
+           
+            if(have_rows("sub_{$type}_galleries", $post->ID)):
+                
+                while(have_rows("sub_{$type}_galleries", $post->ID)) : the_row();
+                    $galleries_object = new stdClass();
+                    $galleries_object->title = get_sub_field('gallery_title');
+                    
+                    array_push($galleries, $galleries_object);
+
+                endwhile;
+            endif;
+            $post_object->galleries=$galleries;
+            array_push($data, $post_object);
+        }
+    }
+    return $data;
+    
+
+
+}
 
 
 
@@ -496,10 +540,11 @@ function get_nav_items(){
 
             
             
-
+          
            $projects[$project_counter]['id'] = $post->ID;
            $projects[$project_counter]['title'] = $post->post_title;
            $projects[$project_counter]['slug'] = $post->post_name;
+           $projects[$project_counter]["subs"] =get_sub_for_nav('projects', $post->post_name);
            if(check_sub_count($post->post_name, 'projects')==2){
                 $projects[$project_counter]['gallery']=true;
             }elseif(check_sub_count($post->post_name, 'projects' )>2){
@@ -517,6 +562,7 @@ function get_nav_items(){
             $works[$work_counter]['id'] = $post->ID;
             $works[$work_counter]['title'] = $post->post_title;
             $works[$work_counter]['slug'] = $post->post_name;
+            $works[$work_counter]["subs"] =get_sub_for_nav('works', $post->post_name);
             if(check_sub_count($post->post_name, 'works')==2){
                 $works[$work_counter]['gallery']=true;
             }elseif(check_sub_count($post->post_name, 'works' )>2){
