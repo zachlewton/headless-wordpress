@@ -755,10 +755,122 @@ add_action('rest_api_init', function(){
     ]);
 
 });
+////////////////////////////////////////////////////////////////////////////////////
+
+function get_sub_gallery(WP_REST_Request $request){
+    
+    $type=$request['type'];
+    $slug=$request['slug'];
+    $gallery_slug=$request['gallery_slug'];
+    $args = array(
+        'numberposts' => -1,
+        'post_type' => "sub_{$type}",
+        
+    );
+    $posts = new WP_Query($args);
+
+    $gallery_object = new stdClass();
+
+    
+
+    foreach($posts->posts as $post){
+
+        
+        
+        $parent_id= get_post_meta($post->ID, "parent_{$type}", true)[0];
+        $parent= get_post($parent_id)->post_name;
+        if($parent === $slug){
+
+            
+
+            
+            
+            
+           
+            if(have_rows("sub_{$type}_galleries", $post->ID)):
+                
+                while(have_rows("sub_{$type}_galleries", $post->ID)) : the_row();
+
+                    $row_title = get_sub_field('gallery_title');
+                    $row_slug = create_slug($row_title);
+                    
+
+                    if( $row_slug === $gallery_slug){
+
+                       
+
+
+                        
+                        $gallery_object = new stdClass();
+                        $gallery_object->gallery_slug = create_slug(get_sub_field('gallery_title'));
+                        $gallery_object->title = get_sub_field('gallery_title');
+                        $image_array= get_sub_field('gallery_images');
+                        $gallery_object->images= [];
+                        foreach($image_array as $id){
+                            array_push($gallery_object->images,handle_images($id) );
+                        }
+                        $gallery_object->thumbnail=get_image_src(get_sub_field('gallery_thumbnail'));
+                        
+
+                    }
+                    
+                    
+                   
+
+                endwhile;
+            endif;
+
+            
+            
+        }
+    }
+    return $gallery_object;
 
 
 
 
+    
+}
+
+
+add_action('rest_api_init', function(){
+
+    register_rest_route('custom-api/v1', 'gallery_images(?P<type>.*)(?P<slug>.*)(?P<gallery_slug>.*)', [
+
+        'methods'  => 'GET',
+        'callback' => 'get_sub_gallery'
+    ]);
+
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////
+function create_slug($text)
+{
+  // replace non letter or digits by -
+  $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+
+  // transliterate
+  $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+  // remove unwanted characters
+  $text = preg_replace('~[^-\w]+~', '', $text);
+
+  // trim
+  $text = trim($text, '-');
+
+  // remove duplicate -
+  $text = preg_replace('~-+~', '-', $text);
+
+  // lowercase
+  $text = strtolower($text);
+
+  if (empty($text)) {
+    return 'n-a';
+  }
+
+  return $text;
+}
 ///////////////////////////////////////////////////////////////////////////////////
 
 function get_subs(WP_REST_Request $request){
@@ -790,6 +902,7 @@ function get_subs(WP_REST_Request $request){
                 
                 while(have_rows("sub_{$type}_galleries", $post->ID)) : the_row();
                     $galleries_object = new stdClass();
+                    $galleries_object->gallery_slug = create_slug(get_sub_field('gallery_title'));
                     $galleries_object->title = get_sub_field('gallery_title');
                     $image_array= get_sub_field('gallery_images');
                     $galleries_object->images= [];
@@ -816,9 +929,6 @@ add_action('rest_api_init', function(){
         'callback' => 'get_subs'
     ]);
 });
-
-//////////////////////////////////////////////////////////////////////////
-
 
 
 
