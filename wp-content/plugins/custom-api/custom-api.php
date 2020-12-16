@@ -635,6 +635,7 @@ function handle_images($id){
         $meta['image_caption_line_3'][0],
         $meta['image_caption_line_4'][0] 
     ];
+    $image['main_caption']=$meta['main_caption'][0];
 
     return $image;
 }
@@ -839,6 +840,75 @@ add_action('rest_api_init', function(){
 
         'methods'  => 'GET',
         'callback' => 'get_sub_gallery'
+    ]);
+
+});
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+function ig(WP_REST_Request $request){
+
+    $slug= $request['slug'];
+    $type=$request['type'];
+    $gallery_slug=$request['gallery_slug'];
+    $args = array(
+        'numberposts' => -1,
+        'post_type' => "sub_{$type}",
+        
+    );
+    $posts = new WP_Query($args);
+    $data=[];
+    
+    foreach($posts->posts as $post){
+        
+        $parent_id= get_post_meta($post->ID, "parent_{$type}", true)[0];
+        $parent= get_post($parent_id)->post_name;
+        if($parent === $slug){
+            if($post->post_name === $gallery_slug){
+                $post_object = new stdClass();
+                $galleries = [];
+                $post_object->id = $post->ID;
+                $post_object->slug = $post->post_name;
+                $post_object->title = $post->post_title;
+                $post_object->description = get_post_meta($post->ID, "sub_{$type}_description", true);
+            
+                if(have_rows("sub_{$type}_galleries", $post->ID)):
+                    
+                    while(have_rows("sub_{$type}_galleries", $post->ID)) : the_row();
+                        $galleries_object = new stdClass();
+                        $galleries_object->gallery_slug = create_slug(get_sub_field('gallery_title'));
+                        $galleries_object->title = get_sub_field('gallery_title');
+                        $image_array= get_sub_field('gallery_images');
+                        $galleries_object->images= [];
+                        foreach($image_array as $id){
+                            array_push($galleries_object->images,handle_images($id) );
+                        }
+                        $galleries_object->thumbnail=get_image_src(get_sub_field('gallery_thumbnail'));
+                        array_push($galleries, $galleries_object);
+
+                    endwhile;
+                endif;
+                $post_object->galleries=$galleries;
+                
+            }
+
+            
+        }
+    }
+    return $post_object;
+
+    
+
+}
+
+
+add_action('rest_api_init', function(){
+
+    register_rest_route('custom-api/v1', 'ig(?P<type>.*)(?P<slug>.*)(?P<gallery_slug>.*)', [
+
+        'methods'  => 'GET',
+        'callback' => 'ig'
     ]);
 
 });
