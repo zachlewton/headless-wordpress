@@ -954,6 +954,8 @@ function get_subs(WP_REST_Request $request){
     );
     $posts = new WP_Query($args);
     $data=[];
+    $final_object= new stdClass();
+
     
     foreach($posts->posts as $post){
         
@@ -961,12 +963,13 @@ function get_subs(WP_REST_Request $request){
         $parent= get_post($parent_id)->post_name;
         if($parent === $slug){
 
-            $post_object = new stdClass();
+            $final_object->title=$parent;
+            $subs_object = new stdClass();
             $galleries = [];
-            $post_object->id = $post->ID;
-            $post_object->slug = $post->post_name;
-            $post_object->title = $post->post_title;
-            $post_object->description = get_post_meta($post->ID, "sub_{$type}_description", true);
+            $subs_object->id = $post->ID;
+            $subs_object->slug = $post->post_name;
+            $subs_object->title = $post->post_title;
+            $subs_object->description = get_post_meta($post->ID, "sub_{$type}_description", true);
            
             if(have_rows("sub_{$type}_galleries", $post->ID)):
                 
@@ -984,11 +987,13 @@ function get_subs(WP_REST_Request $request){
 
                 endwhile;
             endif;
-            $post_object->galleries=$galleries;
-            array_push($data, $post_object);
+            $subs_object->galleries=$galleries;
+            array_push($data, $subs_object);
         }
     }
-    return $data;
+    $final_object->subs = $data;
+
+    return $final_object;
 }
 
 add_action('rest_api_init', function(){
