@@ -1006,6 +1006,37 @@ add_action('rest_api_init', function(){
 });
 
 
+////////////////////////////////////////////////////////////////////////////
+
+function home_page(){
+
+    $args = array(
+        'numberposts' => -1,
+        'post_type' => "home_page",
+        
+    );
+    $posts = new WP_Query($args);
+    $data = [];
+    $meta = get_post_meta($posts->post->ID, 'home_page_gallery');
+    foreach($meta[0] as $image){
+        $handled_image = handle_images($image);
+        array_push($data, $handled_image );
+    }
+
+    return $data;
+
+}
+
+
+add_action('rest_api_init', function(){
+
+    register_rest_route('custom-api/v1', 'home_page', [
+
+        'methods'  => 'GET',
+        'callback' => 'home_page'
+    ]);
+});
+
 
 
 
