@@ -517,7 +517,7 @@ function get_nav_items(){
 
     $args = array(
         'numberposts' => -1,
-        'post_type' => array('projects', 'works' ),
+        'post_type' => array('projects', 'works', 'info' ),
         
        
         
@@ -527,11 +527,13 @@ function get_nav_items(){
 
     $works = [];
     $projects = [];
+    $info=[];
     
     $data = [];
     
     $project_counter=0;
     $work_counter=0;
+    $info_counter=0;
 
     
 
@@ -575,6 +577,16 @@ function get_nav_items(){
 
         }
 
+        if($post->post_type === 'info'){
+            $info[$info_counter]['id']= $post->ID;
+            $info[$info_counter]['title']= $post->post_title;
+            $info[$info_counter]['slug']= $post->post_name;
+
+
+            $info_counter++;
+
+        }
+
 
         else null;
 
@@ -587,6 +599,7 @@ function get_nav_items(){
 
     $data['projects'] = $projects;
     $data['works'] = $works;
+    $data['info']=$info;
 
 
 
@@ -1037,6 +1050,82 @@ add_action('rest_api_init', function(){
     ]);
 });
 
+
+/////////////////////////////////////////////////////////////////////////////////
+
+function info_items(WP_REST_Request $request){
+
+    $slug= $request['slug'];
+    
+    $args = array(
+        'numberposts' => -1,
+        'post_type' => 'info',
+        'name' => $slug
+        
+    );
+    $posts = new WP_Query($args);
+    $post = $posts->post;
+    
+    $meta = get_post_meta($post->ID);
+    $data= new stdClass();
+    $block_array = [];
+    
+
+    if(have_rows("content_block", $post->ID)):
+                
+        while(have_rows("content_block", $post->ID)) : the_row();
+
+        $block_object = new stdClass();
+        $content_rows = [];
+
+        if(have_rows('content')){
+            while(have_rows('content')) : the_row();
+
+            $content_row = new stdClass();
+            $content_row->paragraph=get_sub_field('paragraph');
+            $image=handle_images(get_sub_field('image'));
+            if($image['src'] === null){
+                $content_row->image= null ;
+            } else $content_row->image= $image;
+            
+            array_push($content_rows, $content_row);
+
+
+
+
+            endwhile;
+        }
+
+
+        $block_object->title = get_sub_field('title');
+        $block_object->content=$content_rows;
+
+
+        array_push($block_array, $block_object);
+            
+
+        endwhile;
+    endif;
+
+    $data->title=$post->post_title;
+    $data->content_blocks = $block_array;
+
+    
+
+    return $data;
+
+}
+
+
+
+add_action('rest_api_init', function(){
+
+    register_rest_route('custom-api/v1', 'info_items(?P<slug>.*)', [
+
+        'methods'  => 'GET',
+        'callback' => 'info_items'
+    ]);
+});
 
 
 
