@@ -976,7 +976,7 @@ function get_subs(WP_REST_Request $request){
         $parent= get_post($parent_id)->post_name;
         if($parent === $slug){
 
-            $final_object->title=$parent;
+            $final_object->title= get_post($parent_id)->post_title;
             $subs_object = new stdClass();
             $galleries = [];
             $subs_object->id = $post->ID;
