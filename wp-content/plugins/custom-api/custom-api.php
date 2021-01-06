@@ -640,6 +640,7 @@ function handle_images($id){
 
     $image= null;
 
+    $image['id']=$id;
     $image['src']=get_image_src($id);
     $meta=get_post_meta( $id );
     $image['caption']=[
@@ -1050,6 +1051,33 @@ add_action('rest_api_init', function(){
     ]);
 });
 
+/////////////////////////////////////////////////////////////////////////////////
+
+function landing_page(){
+
+    $args = array(
+        'numberposts' => 1,
+        'post_type' => "featured",
+        
+    );
+    $posts = new WP_Query($args);
+    
+    $meta = get_post_meta($posts->post->ID, "featured_image");
+    $image =wp_get_attachment_image_src( $meta[0], 'full' );;
+    
+
+    return $image[0];
+
+}
+
+add_action('rest_api_init', function(){
+
+    register_rest_route('custom-api/v1', 'landing_page', [
+
+        'methods'  => 'GET',
+        'callback' => 'landing_page'
+    ]);
+});
 
 /////////////////////////////////////////////////////////////////////////////////
 
