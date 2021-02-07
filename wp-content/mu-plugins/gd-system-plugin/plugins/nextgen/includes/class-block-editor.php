@@ -22,10 +22,10 @@ class Block_Editor {
 	 */
 	public function __construct() {
 
-		add_action( 'enqueue_block_editor_assets', array( $this, 'block_editor_overrides' ) );
-		add_action( 'init', array( $this, 'register_settings' ) );
-		add_action( 'admin_init', array( $this, 'register_nextgen_pattern_categories' ) );
-		add_action( 'admin_init', array( $this, 'remove_default_block_patterns' ) );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'block_editor_overrides' ] );
+		add_action( 'init', [ $this, 'register_settings' ] );
+		add_action( 'admin_init', [ $this, 'register_nextgen_pattern_categories' ] );
+		add_action( 'admin_init', [ $this, 'remove_default_block_patterns' ] );
 
 	}
 
@@ -38,13 +38,13 @@ class Block_Editor {
 		register_setting(
 			'nextgen_admin_dashboard_shortcut_enabled',
 			'nextgen_admin_dashboard_shortcut_enabled',
-			array(
+			[
 				'type'              => 'boolean',
 				'description'       => __( 'Setting to disable or enable NextGen administration dashboard shortcut.', 'nextgen' ),
 				'sanitize_callback' => null,
 				'show_in_rest'      => true,
 				'default'           => true,
-			)
+			]
 		);
 
 	}
@@ -55,24 +55,27 @@ class Block_Editor {
 	 * @access public
 	 */
 	public function remove_default_block_patterns() {
-		
+
 		$registered_patterns = \WP_Block_Patterns_Registry::get_instance()->get_all_registered();
 
-		array_walk( $registered_patterns, function($item) {
+		array_walk(
+			$registered_patterns,
+			function( $item ) {
 
-			if ( ! isset( $item['name'] ) ) {
+				if ( ! isset( $item['name'] ) ) {
 
-			  return;
+					return;
+
+				}
+
+				if ( strpos( $item['name'], 'core/' ) === 0 ) {
+
+					unregister_block_pattern( $item['name'] );
+
+				}
 
 			}
-
-			if ( strpos( $item['name'], 'core/' ) === 0 ) {
-
-			  unregister_block_pattern( $item['name'] );
-
-			}
-
-		} );
+		);
 
 	}
 
@@ -83,13 +86,13 @@ class Block_Editor {
 	 */
 	public function register_nextgen_pattern_categories() {
 
-		register_block_pattern_category( 'headline', array( 'label' => __( 'Headline', 'nextgen' ) ) );
-		register_block_pattern_category( 'text', array( 'label' => __( 'Text', 'nextgen' ) ) );
-		register_block_pattern_category( 'list', array( 'label' => __( 'List', 'nextgen' ) ) );
-		register_block_pattern_category( 'image', array( 'label' => __( 'Image', 'nextgen' ) ) );
-		register_block_pattern_category( 'gallery', array( 'label' => __( 'Gallery', 'nextgen' ) ) );
-		register_block_pattern_category( 'contact', array( 'label' => __( 'Contact', 'nextgen' ) ) );
-		register_block_pattern_category( 'call-to-action', array( 'label' => __( 'Call To Action', 'nextgen' ) ) );
+		register_block_pattern_category( 'headline', [ 'label' => __( 'Headline', 'nextgen' ) ] );
+		register_block_pattern_category( 'text', [ 'label' => __( 'Text', 'nextgen' ) ] );
+		register_block_pattern_category( 'list', [ 'label' => __( 'List', 'nextgen' ) ] );
+		register_block_pattern_category( 'image', [ 'label' => __( 'Image', 'nextgen' ) ] );
+		register_block_pattern_category( 'gallery', [ 'label' => __( 'Gallery', 'nextgen' ) ] );
+		register_block_pattern_category( 'contact', [ 'label' => __( 'Contact', 'nextgen' ) ] );
+		register_block_pattern_category( 'call-to-action', [ 'label' => __( 'Call To Action', 'nextgen' ) ] );
 
 	}
 
@@ -100,42 +103,30 @@ class Block_Editor {
 	 */
 	public function block_editor_overrides() {
 
-		$referer = wp_get_referer();
+		$default_asset_file = [
+			'dependencies' => [],
+			'version'      => GD_NEXTGEN_VERSION,
+		];
+
+		$asset_filepath = GD_NEXTGEN_PLUGIN_DIR . '/build/block-editor.asset.php';
+		$asset_file     = file_exists( $asset_filepath ) ? include $asset_filepath : $default_asset_file;
 
 		wp_enqueue_script(
 			'nextgen-block-editor',
 			GD_NEXTGEN_PLUGIN_URL . 'build/block-editor.js',
-			array( 'wp-blocks' ),
-			GD_NEXTGEN_VERSION,
+			$asset_file['dependencies'],
+			$asset_file['version'],
 			true
 		);
 
-		wp_enqueue_script(
-			'nextgen-block-editor-behavior',
-			GD_NEXTGEN_PLUGIN_URL . 'build/site-editor-behavior.js',
-			array( 'wp-blocks' ),
-			GD_NEXTGEN_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'nextgen-block-editor',
-			'nextgenBlockEditorDefaults',
-			array(
-				'closeLabel'           => esc_attr__( 'Back' ), // Use translation from core.
-				'closeReferer'         => $referer ? esc_url( $referer ) : 0,
-				'userId'               => get_current_user_id(),
-				'adminUrl'             => admin_url(),
-				'buttonLabel'          => __( 'WordPress Dashboard', 'nextgen' ),
-				'adminShortcutEnabled' => get_option( 'nextgen_admin_dashboard_shortcut_enabled' ),
-			)
-		);
+		$asset_filepath = GD_NEXTGEN_PLUGIN_DIR . '/build/block-editor-style.asset.php';
+		$asset_file     = file_exists( $asset_filepath ) ? include $asset_filepath : $default_asset_file;
 
 		wp_enqueue_style(
 			'nextgen-uxcore-style',
 			GD_NEXTGEN_PLUGIN_URL . 'build/block-editor-style.css',
-			array( 'wp-block-library' ),
-			GD_NEXTGEN_VERSION
+			[],
+			$asset_file['version']
 		);
 	}
 

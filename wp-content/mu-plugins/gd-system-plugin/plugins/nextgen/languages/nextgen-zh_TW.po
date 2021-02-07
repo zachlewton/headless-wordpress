@@ -7,8 +7,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-11-03T21:05:15+00:00\n"
-"PO-Revision-Date: 2020-11-03T21:05:18+00:00\n"
+"POT-Creation-Date: 2021-01-06T18:37:44+00:00\n"
+"PO-Revision-Date: 2021-01-06T18:37:48+00:00\n"
 "Language: \n"
 "X-Generator: json2po\n"
 
@@ -33,34 +33,46 @@ msgstr ""
 msgid "Setting to disable or enable NextGen administration dashboard shortcut."
 msgstr "設定停用或啟用 NextGen 管理儀表板捷徑。"
 
-#: includes/class-block-editor.php:86
-msgid "Headline"
-msgstr ""
-
-#: includes/class-block-editor.php:87
-msgid "Text"
-msgstr ""
-
-#: includes/class-block-editor.php:88
-msgid "List"
-msgstr ""
-
 #: includes/class-block-editor.php:89
-msgid "Image"
-msgstr ""
+msgid "Headline"
+msgstr "標題"
 
 #: includes/class-block-editor.php:90
-msgid "Gallery"
-msgstr ""
+msgid "Text"
+msgstr "文字"
 
 #: includes/class-block-editor.php:91
-msgid "Contact"
-msgstr ""
+msgid "List"
+msgstr "清單"
 
 #: includes/class-block-editor.php:92
-msgid "Call To Action"
-msgstr ""
+msgid "Image"
+msgstr "圖片"
 
-#: includes/class-block-editor.php:129
-msgid "WordPress Dashboard"
-msgstr "WordPress 儀表板"
+#: includes/class-block-editor.php:93
+msgid "Gallery"
+msgstr "圖庫"
+
+#: includes/class-block-editor.php:94
+msgid "Contact"
+msgstr "聯絡人"
+
+#: includes/class-block-editor.php:95
+msgid "Call To Action"
+msgstr "行動呼籲"
+
+#: includes/class-image-categories.php:78
+msgid "Image category."
+msgstr "圖片類別"
+
+#: includes/class-publish-guide.php:135
+msgid "Display Publish Guide."
+msgstr "顯示發佈說明。"
+
+#: includes/class-site-design.php:295
+msgid "A design_style must be passed."
+msgstr "須通過 design_style。"
+
+#: includes/class-site-design.php:303
+msgid "An available design_style must be passed."
+msgstr "須通過可供使用的 design_style。"

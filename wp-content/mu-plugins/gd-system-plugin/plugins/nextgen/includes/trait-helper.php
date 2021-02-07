@@ -1,4 +1,10 @@
 <?php
+/**
+ * NextGen Helpers
+ *
+ * @since 1.0.0
+ * @package NextGen
+ */
 
 namespace GoDaddy\WordPress\Plugins\NextGen;
 
@@ -9,7 +15,7 @@ trait Helper {
 	/**
 	 * Validate REST Nonce from the request
 	 *
-	 * @param string $cap Capability to check as well of the nonce
+	 * @param string $cap Capability to check as well of the nonce.
 	 *
 	 * @return void
 	 */
@@ -27,7 +33,7 @@ trait Helper {
 
 		if ( ! $result ) {
 
-			wp_send_json_error('Invalid nonce');
+			wp_send_json_error( 'Invalid nonce' );
 
 			exit;
 

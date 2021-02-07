@@ -1,11 +1,26 @@
 <?php
+/**
+ * NextGen Site Content
+ *
+ * @since 1.0.0
+ * @package NextGen
+ */
 
 namespace GoDaddy\WordPress\Plugins\NextGen;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Site_Content
+ *
+ * @package NextGen
+ * @author  GoDaddy
+ */
 class Site_Content {
 
+	/**
+	 * Class constructor
+	 */
 	public function __construct() {
 
 		add_action( 'admin_init', [ $this, 'register_scripts' ] );
@@ -57,8 +72,8 @@ class Site_Content {
 		$post_types = get_post_types();
 		$white_list = [
 			'page' => 'pages',
-			// 'post'    => 'posts',
-			// 'product' => 'products',
+			// 'post'    => 'posts', // @codingStandardsIgnoreLine
+			// 'product' => 'products', // @codingStandardsIgnoreLine
 		];
 
 		foreach ( $post_types as $post_type_slug ) {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * NextGen Singleton
+ *
+ * @since 1.0.0
+ * @package NextGen
+ */
 
 namespace GoDaddy\WordPress\Plugins\NextGen;
 
@@ -40,4 +46,3 @@ trait Singleton {
 	}
 
 }
-

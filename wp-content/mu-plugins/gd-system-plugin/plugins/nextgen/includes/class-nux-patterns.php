@@ -1,15 +1,30 @@
 <?php
+/**
+ * NextGen NUX Patterns
+ *
+ * @since 1.0.0
+ * @package NextGen
+ */
 
 namespace GoDaddy\WordPress\Plugins\NextGen;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * NUX_Patterns
+ *
+ * @package NextGen
+ * @author  GoDaddy
+ */
 class NUX_Patterns {
 
+	/**
+	 * Class constructor
+	 */
 	public function __construct() {
 
-		add_action( 'enqueue_block_editor_assets', array( $this, 'register_scripts' ) );
-		add_action( 'admin_init', array( $this, 'deregister_go_layouts' ) );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'register_scripts' ] );
+		add_action( 'admin_init', [ $this, 'deregister_go_layouts' ] );
 
 	}
 
@@ -18,10 +33,10 @@ class NUX_Patterns {
 	 */
 	public function register_scripts() {
 
-		$default_asset_file = array(
-			'dependencies' => array(),
+		$default_asset_file = [
+			'dependencies' => [],
 			'version'      => GD_NEXTGEN_VERSION,
-		);
+		];
 
 		// Editor Script.
 		$asset_filepath = GD_NEXTGEN_PLUGIN_DIR . '/build/nux-patterns.asset.php';
@@ -43,10 +58,10 @@ class NUX_Patterns {
 		wp_localize_script(
 			'nextgen-nux-patterns',
 			'nextgenNuxPatterns',
-			array(
+			[
 				'nuxApiEndpoint' => apply_filters( 'nextgen_nux_api_endpoint', 'https://wpnux.godaddy.com/v2/api' ),
 				'wpnuxTemplate'  => isset( $wpnux_export_data->_meta->template ) ? $wpnux_export_data->_meta->template : '',
-			)
+			]
 		);
 	}
 

@@ -20,8 +20,8 @@ class Logo_Menu {
 	 */
 	public function __construct() {
 
-		add_action( 'admin_init', array( $this, 'register_scripts' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'localize_scripts' ) );
+		add_action( 'admin_init', [ $this, 'register_scripts' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'localize_scripts' ] );
 
 	}
 
@@ -29,21 +29,29 @@ class Logo_Menu {
 	 * Enqueue the script.
 	 */
 	public function localize_scripts() {
+
 		wp_localize_script(
 			'logo-menu-script',
 			'logoMenuData',
-			(array) apply_filters( 'nextgen_admin_links', [] )
+			(array) apply_filters(
+				'nextgen_admin_links',
+				[
+					'admin' => get_admin_url(),
+				]
+			)
 		);
+
 	}
 
 	/**
 	 * Enqueue the script.
 	 */
 	public function register_scripts() {
-		$default_asset_file = array(
-			'dependencies' => array(),
+
+		$default_asset_file = [
+			'dependencies' => [],
 			'version'      => GD_NEXTGEN_VERSION,
-		);
+		];
 
 		// Editor Script.
 		$asset_filepath = GD_NEXTGEN_PLUGIN_DIR . '/build/logo-menu.asset.php';
@@ -62,8 +70,9 @@ class Logo_Menu {
 		wp_enqueue_style(
 			'logo-menu-editor',
 			GD_NEXTGEN_PLUGIN_URL . 'build/logo-menu-editor.css',
-			array(),
+			[],
 			$asset_file['version']
 		);
+
 	}
 }

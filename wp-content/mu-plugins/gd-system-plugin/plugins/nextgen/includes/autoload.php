@@ -1,4 +1,10 @@
 <?php
+/**
+ * Plugin autoloader
+ *
+ * @since 1.0.0
+ * @package NextGen
+ */
 
 namespace GoDaddy\WordPress\Plugins\NextGen;
 
@@ -6,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 spl_autoload_register(
 
-	function( $resource ) {
+	function( $resource ) { // @codingStandardsIgnoreLine
 
 		if ( 0 !== strpos( $resource, __NAMESPACE__ ) ) {
 
@@ -33,5 +39,4 @@ spl_autoload_register(
 		}
 
 	}
-
 );
