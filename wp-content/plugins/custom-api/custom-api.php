@@ -962,7 +962,10 @@ function projects(WP_REST_Request $request){
 
                 $featured_image = wp_get_attachment_image_src($featured_image_id, 'large')[0];
                 $data[$x]['featured_image'] = $featured_image;
-           }else null;
+           }elseif($post_meta['display_options'][0] == "video"){
+            $data[$x]['featured_image']=wp_get_attachment_image_src($post_meta['featured_image'][0], 'large')[0];
+           }
+           else null;
        }
 
       
@@ -1099,13 +1102,50 @@ function get_sub_gallery(WP_REST_Request $request){
             $gallery_object->slug= create_slug($gallery['gallery_title']);
             $gallery_object->title = $gallery['gallery_title'];
             $gallery_object->display_type= $gallery['display_type'];
-            $images = [];
+            
+            if(strlen($gallery['gallery_description']) > 0){
+                $gallery_object->description = $gallery['gallery_description'];
+            }
 
-            foreach($gallery['gallery_images'] as $image){
-                array_push($images, handle_images($image));
+            if($gallery['display_type'] == 'video'){
+                $gallery_object->video_link= $gallery['video_link']['video_link'];
+            }else{
+                $images = [];
+
+                foreach($gallery['images'] as $block){
+
+                    $block_object =  new stdClass();
+
+                    if($block['type'] == 'video'){
+                        $block_object->block_type = 'video';
+                        $block_object->video_title = $block['video_title'];
+                        $block_object->video_link = $block['video_link'];
+
+                        
+
+                    }else{
+
+                        $image_block_array = [];
+
+                        $block_object->block_type = 'image_block';
+
+                        foreach($block['image_block'] as $image){
+                            array_push($image_block_array, handle_images($image));
+
+                        }
+
+                        $block_object->image_block = $image_block_array;
+                        
+                    }
+
+                    array_push($images, $block_object);
+                }
+                
+
+                $gallery_object->images= $images;
             }
             
-            $gallery_object->images= $images;
+            
             
            
 
@@ -1231,6 +1271,7 @@ function ig(WP_REST_Request $request){
     $final_object->display_type = $sub_meta['display_options'][0];
 
     if($sub_meta['display_options'][0] == 'video'){
+        $final_object->video_link = get_field('video', $sub->ID)['video_link'];
 
     }elseif($sub_meta['display_options'][0] == 'intro galleries'){
         $sub_galleries_array = get_field('sub_galleries', $sub->ID);
@@ -1244,20 +1285,33 @@ function ig(WP_REST_Request $request){
             $sub_gallery_object->slug = create_slug($sub_gallery['gallery_title']) ;
             $sub_gallery_object->title = $sub_gallery['gallery_title'];
             $sub_gallery_object->display_type = $sub_gallery['display_type'];
-            $gallery_blocks = $sub_gallery['images'];
-            $featured_image_id = null;
-        
-        
-            foreach($gallery_blocks as $block){
-                if($block['type'] == 'image block'){
-                    $featured_image_id = $block['image_block'][0];
-                    break;
-                }
-            
-            }
 
-            $featured_image = wp_get_attachment_image_src($featured_image_id, 'large')[0];
-            $sub_gallery_object->featured_image = $featured_image;
+            if($sub_gallery['display_type'] == 'video'){
+
+                $sub_gallery_object->featured_image =  wp_get_attachment_image_src($sub_gallery['video_link']['featured_image'], 'large')[0]; 
+               
+                
+
+            }else{
+
+                $gallery_blocks = $sub_gallery['images'];
+                $featured_image_id = null;
+            
+            
+                foreach($gallery_blocks as $block){
+                    if($block['type'] == 'image block'){
+                        $featured_image_id = $block['image_block'][0];
+                        break;
+                    }
+                
+                }
+
+                $featured_image = wp_get_attachment_image_src($featured_image_id, 'large')[0];
+                $sub_gallery_object->featured_image = $featured_image;
+                    
+                }
+
+            
 
 
             array_push($sub_galleries, $sub_gallery_object);
@@ -1479,11 +1533,25 @@ function get_subs(WP_REST_Request $request){
             }else{
                 if(get_post_meta($post->ID, 'gallery')){
                     
-                    $featured_image_id =get_field('gallery', $post->ID)[0];
+                    $gallery_blocks =get_field('gallery', $post->ID);
+                    $featured_image_id = null;
+            
+            
+                    foreach($gallery_blocks as $block){
+                        if($block['type'] == 'image block'){
+                            $featured_image_id = $block['image_block'][0];
+                            break;
+                        }
+                    
+                    }
+
                     $featured_image = wp_get_attachment_image_src($featured_image_id, 'large')[0];
                     $post_object->featured_image = $featured_image;
                 }
-                
+                elseif($display_options == "video"){
+                    $featured_image_id = get_post_meta($post->ID, 'sub_featured_image')[0];
+                    $post_object->featured_image = wp_get_attachment_image_src($featured_image_id, 'large')[0];
+                }
                 else null;
             }
 
@@ -1497,7 +1565,9 @@ function get_subs(WP_REST_Request $request){
         }
 
     }elseif($display_type == 'video'){
+        
         $final_object->video = get_field('video_link', $parent->ID);
+
     }else{
         $gallery =[];
         $gallery_array = get_field('gallery', $parent->ID);
